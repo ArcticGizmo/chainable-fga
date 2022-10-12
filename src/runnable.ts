@@ -25,7 +25,7 @@ export async function example() {
   const results = await Promise.all([
     // checker.check().user('anne').hasRelation('__missing__').withObject('itinerary:0001').query()
     // checker.check().user('anne').hasRelation('owner').withObject('__missing__').query()
-    checker.check().user('anne').hasRelation('owner').withObject('a:b').query()
+    // checker.check().user('anne').hasRelation('owner').withObject('a:b').query()
     // checker.check().user('anne').hasRelation('owner').withObject('itinerary:0001').query(),
     // checker.check().user('anne').hasRelation('shared_with').withObject('itinerary:0001').query(),
     // checker.check().user('beth').hasRelation('shared_with').withObject('itinerary:0001').query()

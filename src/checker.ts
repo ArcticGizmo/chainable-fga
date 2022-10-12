@@ -1,36 +1,14 @@
 import { OpenFgaApi } from '@openfga/sdk';
 import type { TupleKey, CheckRequest } from '@openfga/sdk';
+import {
+  IncompleteTupleError,
+  InvalidObjectFormatError,
+  ObjectTypeNotFoundError,
+  RelationNotFoundError
+} from './errors';
 
 interface QueryOptions {
   authorizationModelId?: string;
-}
-
-class IncompleteTupleError extends Error {
-  constructor() {
-    super('Tuple must have all fields populated [user, object, relation]');
-    this.name = this.constructor.name;
-  }
-}
-
-class RelationNotFoundError extends Error {
-  constructor(relation?: string) {
-    super(`Relation '${relation}' not found`);
-    this.name = this.constructor.name;
-  }
-}
-
-class InvalidObjectFormatError extends Error {
-  constructor(obj?: string) {
-    super(`Invalid object format '${obj}'. Must be 'type:id'`);
-    this.name = this.constructor.name;
-  }
-}
-
-class ObjectTypeNotFoundError extends Error {
-  constructor(type?: string) {
-    super(`Object type '${type}' not found`);
-    this.name = this.constructor.name;
-  }
 }
 
 export class Checker {
@@ -93,11 +71,6 @@ class Check {
           throw error;
       }
     }
-  }
-
-  async is(bool: true, opts?: QueryOptions) {
-    const resp = await this.query(opts);
-    return resp === bool;
   }
 
   isValid() {
