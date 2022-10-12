@@ -11,3 +11,6 @@ tests/coverage
 
 .env
 credentials.json
+
+
+.env.*local
