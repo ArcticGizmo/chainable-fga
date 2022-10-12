@@ -1,25 +1,9 @@
 import '../src/env';
-
-import { OpenFgaApi, CredentialsMethod } from '@openfga/sdk';
 import { Checker } from '../src/checker';
 import { InvalidObjectFormatError, ObjectTypeNotFoundError, RelationNotFoundError } from '../src/errors';
+import { MockOpenFgaApi } from './__mocks__/openFgaApi';
 
-const openFga = new OpenFgaApi({
-  apiScheme: 'https',
-  apiHost: 'api.us1.fga.dev',
-  storeId: process.env['FGA_STORE_ID'] || '',
-  credentials: {
-    method: CredentialsMethod.ClientCredentials,
-    config: {
-      clientId: process.env['FGA_CLIENT_ID'] || '',
-      clientSecret: process.env['FGA_CLIENT_SECRET'] || '',
-      apiTokenIssuer: 'fga.us.auth0.com',
-      apiAudience: 'https://api.us1.fga.dev/'
-    }
-  }
-});
-
-const checker = new Checker(openFga);
+const checker = new Checker(MockOpenFgaApi());
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const expectAsync = (prom: Promise<any>) => {
@@ -43,7 +27,7 @@ describe('Query', () => {
   });
 
   test('invalid object format', async () => {
-    const prom = checker.check().object('invalid').hasRelation('owner').withUser('anne').query();
+    const prom = checker.check().object('__invalid__').hasRelation('owner').withUser('anne').query();
     await expectAsync(prom).toThrow(InvalidObjectFormatError);
   });
 });
