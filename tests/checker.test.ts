@@ -1,4 +1,3 @@
-import '../src/env';
 import { Checker } from '../src/checker';
 import { InvalidObjectFormatError, ObjectTypeNotFoundError, RelationNotFoundError } from '../src/errors';
 import { MockOpenFgaApi } from './__mocks__/openFgaApi';

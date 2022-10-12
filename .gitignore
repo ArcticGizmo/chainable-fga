@@ -8,6 +8,7 @@ VERSION.txt
 tests/coverage
 .idea/
 .vscode/
+.yarn
 
 .env
 credentials.json
