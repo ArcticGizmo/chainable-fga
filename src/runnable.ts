@@ -2,6 +2,7 @@ import './env';
 
 import { OpenFgaApi, CredentialsMethod } from '@openfga/sdk';
 import { Checker } from './checker';
+import { Finder } from './finder';
 
 const openFga = new OpenFgaApi({
   apiScheme: 'https',
@@ -19,6 +20,7 @@ const openFga = new OpenFgaApi({
 });
 
 const checker = new Checker(openFga);
+const finder = new Finder(openFga);
 
 export async function example() {
   console.dir('---- example');
@@ -29,9 +31,14 @@ export async function example() {
     // checker.check().user('anne').hasRelation('owner').withObject('itinerary:0001').query(),
     // checker.check().user('anne').hasRelation('shared_with').withObject('itinerary:0001').query(),
     // checker.check().user('beth').hasRelation('shared_with').withObject('itinerary:0001').query()
+    // finder.users({ relation: 'owner', object: 'itinerary:0001' }),
+    // finder.relations({ user: 'anne', object: 'itinerary:0001' })
+    // finder.find({ object: "itinerary:0001" }),
+    // finder.find({ user: 'anne', object: 'itinerary:' })
+    finder.objects({ user: 'anne', type: 'itinerary', relation: 'owner' })
   ]);
 
-  console.log(results);
+  console.log(...results);
 }
 
 example();
