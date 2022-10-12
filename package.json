@@ -1,0 +1,39 @@
+{
+  "name": "chainable-fga",
+  "version": "1.0.0",
+  "description": "Messing around with an wrapper on top of FGA",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --outDir dist/",
+    "prepublishOnly": "rimraf dist/ && npm run build",
+    "test": "jest --config ./tests/jest.config.js",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
+  },
+  "dependencies": {
+    "@openfga/sdk": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.1.0",
+    "@types/node": "^18.7.23",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
+    "eslint": "^8.24.0",
+    "jest": "^29.1.1",
+    "nock": "^13.2.9",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^29.0.3",
+    "typescript": "^4.8.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArcticGizmo/chainable-fga.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArcticGizmo/chainable-fga/issues"
+  },
+  "homepage": "https://github.com/ArcticGizmo/chainable-fga#readme"
+}
