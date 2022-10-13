@@ -12,8 +12,10 @@ module.exports = {
   },
   plugins: ['@typescript-eslint'],
   rules: {
-    indent: ['warn', 2, { SwitchCase: 1 }],
-    quotes: ['warn', 'single'],
+    // indent: ['warn', 2, { SwitchCase: 1 }],
+    indent: 'off',
+    '@typescript-eslint/indent': ['warn', 2, { SwitchCase: 1 }],
+    quotes: [2, 'single', { avoidEscape: true }],
     semi: ['error', 'always']
   }
 };

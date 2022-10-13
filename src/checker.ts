@@ -19,11 +19,11 @@ export class Checker {
   }
 
   check(tuple?: TupleKey, contextualTuples?: TupleKey[]) {
-    return new Check(this._fga, tuple, contextualTuples);
+    return new CheckChain(this._fga, tuple, contextualTuples);
   }
 }
 
-class Check {
+export class CheckChain {
   private _fga: OpenFgaApi;
   private _user?: string;
   private _object?: string;
@@ -100,6 +100,11 @@ class Check {
 
   withUser(user: string) {
     this._user = user;
+    return this;
+  }
+
+  anyone() {
+    this._user = '*';
     return this;
   }
 

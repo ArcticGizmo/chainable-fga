@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
     "declaration": true,
+    "allowJs": true,
     "target": "es6",
     "module": "commonjs",
     "noImplicitAny": true,
     "strict": true,
     "outDir": "dist",
     "rootDir": ".",
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["ES2021.String"]
   },
   "exclude": ["dist", "node_modules", "**/*.test.ts", "tests"]
 }

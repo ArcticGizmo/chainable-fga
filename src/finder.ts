@@ -1,11 +1,18 @@
-import { OpenFgaApi } from '@openfga/sdk';
+import { ListObjectsRequest, OpenFgaApi } from '@openfga/sdk';
 import type { ReadRequest, TupleKey } from '@openfga/sdk';
+import { IncompleteTypeTupleError } from './errors';
 
 type ReadOpts = Omit<ReadRequest, 'tuple_key'>;
 
 interface ConcreteTupleKey {
   user: string;
   object: string;
+  relation: string;
+}
+
+interface TypeTuple {
+  user: string;
+  type: string;
   relation: string;
 }
 
@@ -82,14 +89,90 @@ export class Finder {
     return { relations, continuation_token: resp.continuation_token };
   }
 
-  async objects(req: ObjectReq, opts?: ReadOpts): Promise<ObjectRes> {
-    const parsedReq: ConcreteTupleKey = {
-      user: req.user,
-      object: `${req.type}:`,
-      relation: req.relation
+  async objects(req: ObjectReq, contextualTuples?: TupleKey[]) {
+    const body: ListObjectsRequest = { ...req };
+    if (contextualTuples?.length) {
+      body.contextual_tuples = { tuple_keys: contextualTuples };
+    }
+    const resp = await this._fga.listObjects(body);
+    return resp.object_ids as string[];
+  }
+
+  findObjects() {
+    return new ObjectChain(this._fga);
+  }
+}
+
+class ObjectChain {
+  private _fga: OpenFgaApi;
+  private _user?: string;
+  private _type?: string;
+  private _relation?: string;
+  private _contextualTuples: TupleKey[] = [];
+
+  constructor(fga: OpenFgaApi) {
+    this._fga = fga;
+  }
+
+  isValid() {
+    return this._user && this._type && this._relation;
+  }
+
+  validate() {
+    if (this.isValid()) {
+      return;
+    }
+
+    throw new IncompleteTypeTupleError();
+  }
+
+  toTypeTuple() {
+    return {
+      user: this._user,
+      type: this._type,
+      relation: this._relation
     };
-    const resp = await this.find(parsedReq, opts);
-    const objects = resp.tuples.map(t => t.key.object);
-    return { objects, continuation_token: resp.continuation_token };
+  }
+
+  async query() {
+    this.validate();
+    const typeTuple = this.toTypeTuple();
+    const req: ListObjectsRequest = { ...typeTuple };
+    if (this._contextualTuples.length) {
+      req.contextual_tuples = { tuple_keys: this._contextualTuples };
+    }
+
+    const resp = await this._fga.listObjects(req);
+    return resp.object_ids as string[];
+  }
+
+  ofType(type: string) {
+    this._type = type;
+    return this;
+  }
+
+  forUser(user: string) {
+    this._user = user;
+    return this;
+  }
+
+  forAnyone() {
+    this._user = '*';
+    return this;
+  }
+
+  withRelation(relation: string) {
+    this._relation = relation;
+    return this;
+  }
+
+  withContext(keyOrKeys: TupleKey | TupleKey[]) {
+    this._contextualTuples = Array.isArray(keyOrKeys) ? keyOrKeys : [keyOrKeys];
+    return this;
+  }
+
+  addContext(key: TupleKey) {
+    this._contextualTuples.push(key);
+    return this;
   }
 }

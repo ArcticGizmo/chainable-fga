@@ -50,8 +50,6 @@ export class MockFgaApi {
   }
 
   async read(body: ReadRequest): Promise<CallResult<any>> {
-    console.dir('---- read');
-
     return {
       $response: axiosResp(),
       tuples: [],
