@@ -1,7 +1,7 @@
 import { OpenFgaApi, WriteRequest } from '@openfga/sdk';
-import { IncompleteTupleError, TransactionError } from './errors';
+import { TransactionError } from './errors';
 import { CompleteTuple, PartialTuple } from './types';
-import { isValidTuple, validateTuple } from './util';
+import { validateTuple } from './util';
 
 type TransactionEntry = (composer: TupleComposer) => TupleComposer;
 
@@ -19,10 +19,6 @@ export class Writer {
   transaction() {
     return new WriterTransaction(this._fga);
   }
-
-  // fromTuple(tuple: CompleteTuple) {
-  //   return new CreateChain(this._fga).set(tuple);
-  // }
 }
 
 class WriterTransaction {
@@ -50,10 +46,6 @@ class WriterTransaction {
 
     try {
       await this._fga.write(req);
-      return {
-        added: this._pendingWrites as CompleteTuple[],
-        deleted: this._pendingDeletes as CompleteTuple[]
-      };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -65,6 +57,16 @@ class WriterTransaction {
 
       throw error;
     }
+
+    const resp = {
+      added: this._pendingWrites as CompleteTuple[],
+      deleted: this._pendingDeletes as CompleteTuple[]
+    };
+
+    this._pendingWrites = [];
+    this._pendingDeletes = [];
+
+    return resp;
   }
 
   add(callback: TransactionEntry) {
