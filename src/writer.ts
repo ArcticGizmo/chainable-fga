@@ -46,7 +46,6 @@ export class WriterTransaction {
 
     try {
       await this._fga.write(req);
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error?.statusCode === 400) {
@@ -119,12 +118,12 @@ export class TupleComposer {
     return this;
   }
 
-  withRelation(relation: string) {
+  hasRelation(relation: string) {
     this._relation = relation;
     return this;
   }
 
-  toObject(object: string) {
+  withObject(object: string) {
     this._object = object;
     return this;
   }

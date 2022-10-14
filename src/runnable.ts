@@ -62,14 +62,14 @@ async function runWriter() {
   console.dir('---- running writer');
   const a = await writer
     .transaction()
-    .add(e => e.user('dave').withRelation('owner').toObject('itinerary:0003'))
+    .add(e => e.user('dave').hasRelation('owner').withObject('itinerary:0003'))
     .commit();
 
   console.dir(a);
 
   const b = await writer
     .transaction()
-    .delete(e => e.user('dave').withRelation('owner').toObject('itinerary:0003'))
+    .delete(e => e.user('dave').hasRelation('owner').withObject('itinerary:0003'))
     .commit();
 
   console.dir(b);
@@ -78,28 +78,44 @@ async function runWriter() {
 async function runAbac() {
   console.dir('---- running abac');
 
-  const a = await abac.findAttributes().forUser('anne').query();
+  const logAttributes = async (name: string) => {
+    await delay(10000);
+    const attrs = await abac.findAttributes().forUser(name).query();
+    console.dir(attrs);
+  };
+
+  await logAttributes('anne');
+
+  await abac.modifyAttributes().forUser('anne').add('job=clerk').commit();
+
+  await logAttributes('anne');
+
+  await abac.modifyAttributes().forUser('anne').add('salery=low').commit();
+
+  await logAttributes('anne');
+
+  await abac.modifyAttributes().forUser('anne').remove('job', 'clerk').remove('salery', 'low').commit();
+
+  await logAttributes('anne');
+}
+
+async function runLatency() {
+  await writer
+    .transaction()
+    .add(e => e.user('anne').hasRelation('owner').withObject('itinerary:a'))
+    .add(e => e.user('anne').hasRelation('viewer').withObject('itinerary:b'))
+    .commit();
+
+  const a = await finder.findObjects().ofType('itinerary').forUser('anne').withRelation('owner').query();
   console.dir(a);
 
-  const b = await Promise.all([
-    abac.check().user('anne').hasAttr('position=manager').query(),
-    abac.check().user('anne').hasAttr('position', 'manager').query(),
-    abac.check().user('anne').hasAttr('position', 'owner').query()
-  ]);
-  console.log(...b);
-
-  const c = await abac.modifyAttributes().forUser('beth').add('position=CS').add('wage=low').commit();
-
-  console.dir(c);
-
-  await delay(5000);
-
-  const d = await abac.findAttributes().forUser('beth').query();
-  console.dir(d);
-
-  const e = await abac.modifyAttributes().forUser('beth').remove('position=CS').remove('wage=low').commit();
-  console.dir(e);
+  await writer
+    .transaction()
+    .delete(e => e.user('anne').hasRelation('owner').withObject('itinerary:a'))
+    .delete(e => e.user('anne').hasRelation('viewer').withObject('itinerary:b'))
+    .commit();
 }
 
 // runWriter();
 runAbac();
+// runLatency();

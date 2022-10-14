@@ -1,6 +1,4 @@
 import { ListObjectsRequest, OpenFgaApi, TupleKey } from '@openfga/sdk';
-import { CheckChain } from './checker';
-import { Finder } from './finder';
 import { WriterTransaction } from './writer';
 
 interface AbacConfiguration {
