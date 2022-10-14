@@ -6,6 +6,7 @@ import {
   ObjectTypeNotFoundError,
   RelationNotFoundError
 } from './errors';
+import { CompleteTuple, PartialTuple } from './types';
 
 interface QueryOptions {
   authorizationModelId?: string;
@@ -18,7 +19,7 @@ export class Checker {
     this._fga = fga;
   }
 
-  check(tuple?: TupleKey, contextualTuples?: TupleKey[]) {
+  check(tuple?: CompleteTuple, contextualTuples?: TupleKey[]) {
     return new CheckChain(this._fga, tuple, contextualTuples);
   }
 }
@@ -82,10 +83,10 @@ export class CheckChain {
       return;
     }
 
-    throw new IncompleteTupleError();
+    throw new IncompleteTupleError(this.toTuple());
   }
 
-  toTuple(): TupleKey {
+  toTuple(): PartialTuple {
     return {
       user: this._user,
       object: this._object,

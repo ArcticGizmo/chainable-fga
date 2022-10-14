@@ -5,6 +5,7 @@ import { Checker } from './checker';
 import { Finder } from './finder';
 import { Rbac } from './rbac';
 import { Writer } from './writer';
+import { Abac } from './abac';
 
 const openFga = new OpenFgaApi({
   apiScheme: 'https',
@@ -25,6 +26,9 @@ const writer = new Writer(openFga);
 const checker = new Checker(openFga);
 const finder = new Finder(openFga);
 const rbac = new Rbac(openFga);
+const abac = new Abac(openFga);
+
+const delay = async (duration: number) => new Promise(r => setTimeout(r, duration));
 
 export async function example() {
   console.dir('---- example');
@@ -71,4 +75,31 @@ async function runWriter() {
   console.dir(b);
 }
 
-runWriter();
+async function runAbac() {
+  console.dir('---- running abac');
+
+  const a = await abac.findAttributes().forUser('anne').query();
+  console.dir(a);
+
+  const b = await Promise.all([
+    abac.check().user('anne').hasAttr('position=manager').query(),
+    abac.check().user('anne').hasAttr('position', 'manager').query(),
+    abac.check().user('anne').hasAttr('position', 'owner').query()
+  ]);
+  console.log(...b);
+
+  const c = await abac.modifyAttributes().forUser('beth').add('position=CS').add('wage=low').commit();
+
+  console.dir(c);
+
+  await delay(5000);
+
+  const d = await abac.findAttributes().forUser('beth').query();
+  console.dir(d);
+
+  const e = await abac.modifyAttributes().forUser('beth').remove('position=CS').remove('wage=low').commit();
+  console.dir(e);
+}
+
+// runWriter();
+runAbac();

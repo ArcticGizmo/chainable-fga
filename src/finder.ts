@@ -1,20 +1,9 @@
 import { ListObjectsRequest, OpenFgaApi } from '@openfga/sdk';
 import type { ReadRequest, TupleKey } from '@openfga/sdk';
 import { IncompleteTypeTupleError } from './errors';
+import { CompleteTuple, PartialTypeTuple } from './types';
 
 type ReadOpts = Omit<ReadRequest, 'tuple_key'>;
-
-interface ConcreteTupleKey {
-  user: string;
-  object: string;
-  relation: string;
-}
-
-interface TypeTuple {
-  user: string;
-  type: string;
-  relation: string;
-}
 
 interface UserReq {
   relation: string;
@@ -44,12 +33,8 @@ interface RelationRes extends FinderResp {
   relations: string[];
 }
 
-interface ObjectRes extends FinderResp {
-  objects: string[];
-}
-
 interface TupleResp {
-  key: ConcreteTupleKey;
+  key: CompleteTuple;
   timestamp: string;
 }
 
@@ -69,7 +54,7 @@ export class Finder {
     const resp = await this._fga.read({ ...opts, tuple_key: tuple });
     const tuples = (resp.tuples || []).map(t => {
       return {
-        key: t.key as ConcreteTupleKey,
+        key: t.key as CompleteTuple,
         timestamp: t.timestamp as string
       };
     });
@@ -123,10 +108,10 @@ class ObjectChain {
       return;
     }
 
-    throw new IncompleteTypeTupleError();
+    throw new IncompleteTypeTupleError(this.toTypeTuple());
   }
 
-  toTypeTuple() {
+  toTypeTuple(): PartialTypeTuple {
     return {
       user: this._user,
       type: this._type,
@@ -166,12 +151,12 @@ class ObjectChain {
     return this;
   }
 
-  withContext(keyOrKeys: TupleKey | TupleKey[]) {
+  withContext(keyOrKeys: CompleteTuple | CompleteTuple[]) {
     this._contextualTuples = Array.isArray(keyOrKeys) ? keyOrKeys : [keyOrKeys];
     return this;
   }
 
-  addContext(key: TupleKey) {
+  addContext(key: CompleteTuple) {
     this._contextualTuples.push(key);
     return this;
   }

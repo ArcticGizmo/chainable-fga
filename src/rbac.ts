@@ -25,15 +25,10 @@ export class Rbac {
   }
 
   createRole(role: string) {
-    return role;
+    // use writer
+    throw 'Not implemented';
   }
 }
-
-// with relation (set as user)
-
-// with another relation (set it as object)
-
-//
 
 class RbacCheckChain {
   private _fga: OpenFgaApi;
@@ -104,18 +99,5 @@ class RbacFindChain {
     }
     const resp = await this._fga.listObjects(body);
     return resp.object_ids as string[];
-  }
-}
-
-class RbacCreateChain {
-  private _fga: OpenFgaApi;
-  private _type: string;
-  private _relation: string;
-  private _user?: string;
-
-  constructor(fga: OpenFgaApi, type: string, relation: string) {
-    this._fga = fga;
-    this._type = type;
-    this._relation = relation;
   }
 }

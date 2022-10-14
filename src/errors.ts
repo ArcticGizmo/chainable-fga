@@ -1,13 +1,23 @@
+import { PartialTuple, PartialTypeTuple } from './types';
+
 export class IncompleteTupleError extends Error {
-  constructor() {
-    super('Tuple must have all fields populated [user, object, relation]');
+  constructor(tuple: PartialTuple) {
+    super(`Tuple must have all fields populated [user, object, relation], got
+    user: '${tuple.user}'
+    object: '${tuple.object}'
+    relation: '${tuple.relation}'
+    `);
     this.name = this.constructor.name;
   }
 }
 
 export class IncompleteTypeTupleError extends Error {
-  constructor() {
-    super('Type tuple must have all fields populated [user, type, relation]');
+  constructor(tuple: PartialTypeTuple) {
+    super(`Type tuple must have all fields populated [user, type, relation] got
+    user: '${tuple.user}'
+    type: '${tuple.type}'
+    relation: '${tuple.relation}'
+    `);
     this.name = this.constructor.name;
   }
 }

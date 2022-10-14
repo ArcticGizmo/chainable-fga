@@ -1,4 +1,9 @@
-import { IncompleteTupleError, IncompleteTypeTupleError, InvalidObjectFormatError, InvalidTypeFormatError } from './errors';
+import {
+  IncompleteTupleError,
+  IncompleteTypeTupleError,
+  InvalidObjectFormatError,
+  InvalidTypeFormatError
+} from './errors';
 import { PartialTuple, PartialTypeTuple } from './types';
 
 export function isValidTuple(tuple: PartialTuple) {
@@ -20,7 +25,7 @@ export function validateTuple(tuple: PartialTuple) {
     throw new InvalidObjectFormatError();
   }
 
-  throw new IncompleteTupleError();
+  throw new IncompleteTupleError(tuple);
 }
 
 export function validateTypeTuple(tuple: PartialTypeTuple) {
@@ -34,5 +39,5 @@ export function validateTypeTuple(tuple: PartialTypeTuple) {
     throw new InvalidTypeFormatError();
   }
 
-  throw new IncompleteTypeTupleError();
+  throw new IncompleteTypeTupleError(tuple);
 }

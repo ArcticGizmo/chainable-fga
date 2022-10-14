@@ -21,7 +21,7 @@ export class Writer {
   }
 }
 
-class WriterTransaction {
+export class WriterTransaction {
   private _fga: OpenFgaApi;
   private _pendingWrites: PartialTuple[] = [];
   private _pendingDeletes: PartialTuple[] = [];
@@ -67,6 +67,12 @@ class WriterTransaction {
     this._pendingDeletes = [];
 
     return resp;
+  }
+
+  set(toAdd: PartialTuple[], toDelete: PartialTuple[]) {
+    this._pendingWrites = toAdd;
+    this._pendingDeletes = toDelete;
+    return this;
   }
 
   add(callback: TransactionEntry) {
